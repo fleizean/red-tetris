@@ -11,31 +11,38 @@ const Header = () => {
     const [scrambleKey, setScrambleKey] = useState(0);
     const [scrambleUsername, setScrambleUsername] = useState(0);
 
+    // Function to trigger username scramble manually on hover
+    const triggerUsernameScramble = () => {
+        setScrambleUsername(prev => prev + 1);
+    };
+
     useEffect(() => {
         // Check if user is logged in
         const token = localStorage.getItem('token');
         setIsLoggedIn(!!token);
+        
+        // Set up automatic scrambling intervals
+        const titleInterval = setInterval(() => {
+            setScrambleKey(prev => prev + 1);
+        }, 10000); // Slowed down to every 10 seconds for title
+        
+        const usernameInterval = setInterval(() => {
+            setScrambleUsername(prev => prev + 1);
+        }, 10000); // Slowed down to every 15 seconds for username
+        
+        // Clean up intervals on component unmount
+        return () => {
+            clearInterval(titleInterval);
+            clearInterval(usernameInterval);
+        };
     }, []);
-
-    const triggerScramble = () => {
-        // Her hover'da yeni bir key vererek bileşenin yeniden render edilmesini sağlıyoruz
-        setScrambleKey(prev => prev + 1);
-    };
-
-    const triggerUsernameScramble = () => {
-        // Her hover'da yeni bir key vererek bileşenin yeniden render edilmesini sağlıyoruz
-        setScrambleUsername(prev => prev + 1);
-    };
 
     return (
         <header className="bg-gray-900/95 backdrop-blur-sm text-white py-4 px-6 border-b border-cyan-600/20 sticky top-0 z-50">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center">
                     <Link href="/" className="group">
-                        <div 
-                            className="text-3xl font-bold tracking-tight relative overflow-hidden"
-                            onMouseEnter={triggerScramble}
-                        >
+                        <div className="text-3xl font-bold tracking-tight relative overflow-hidden">
                             <TextScramble 
                                 key={scrambleKey}
                                 text="TETRIX" 
@@ -128,8 +135,16 @@ const Header = () => {
                         ) : (
                             <>
                                 <Link 
-                                    href="/login" 
-                                    className="ml-auto px-6 py-2 rounded-sm bg-cyan-900/40 border-2 border-cyan-500/70 hover:border-cyan-300 
+                                    href="/signin" 
+                                    className="px-4 py-1.5 rounded-sm bg-transparent hover:bg-gray-800/80 border border-gray-700/40 
+                                    hover:border-cyan-700 transition-all duration-300 text-gray-400 hover:text-cyan-200 
+                                    text-sm font-mono tracking-wide mr-2"
+                                >
+                                    SIGN IN
+                                </Link>
+                                <Link 
+                                    href="/signup" 
+                                    className="px-6 py-2 rounded-sm bg-cyan-900/40 border-2 border-cyan-500/70 hover:border-cyan-300 
                                     transition-all duration-300 text-cyan-200 hover:text-cyan-50 text-sm font-mono tracking-wide
                                     shadow-[0_0_15px_rgba(6,182,212,0.5)] hover:shadow-[0_0_20px_rgba(6,182,212,0.8)] font-bold"
                                 >

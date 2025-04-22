@@ -1,3 +1,4 @@
+import Wave from "@/components/Wave/page";
 import ScrollUp from "../components/Common/ScrollUp";
 import Features from "../components/Features/page";
 import Hero from "../components/Hero/page";
@@ -31,6 +32,7 @@ export default function Home() {
       <ScrollUp />
       <Hero />
       <Features />
+      <Wave />
       <HowToPlay />
     </>
   );

@@ -12,13 +12,13 @@ const CELL_SIZE = 30;
 
 // Tetris shapes with futuristic colors matching the theme
 const SHAPES = [
-    { name: "I", matrix: [[1, 1, 1, 1]], color: "#00FFFF" },
-    { name: "J", matrix: [[1, 0, 0], [1, 1, 1]], color: "#0088FF" },
-    { name: "L", matrix: [[0, 0, 1], [1, 1, 1]], color: "#00CFFF" },
-    { name: "O", matrix: [[1, 1], [1, 1]], color: "#19FFEA" },
-    { name: "S", matrix: [[0, 1, 1], [1, 1, 0]], color: "#38FFD1" },
-    { name: "T", matrix: [[0, 1, 0], [1, 1, 1]], color: "#A084FF" },
-    { name: "Z", matrix: [[1, 1, 0], [0, 1, 1]], color: "#9400D3" }
+    { name: "I", matrix: [[1, 1, 1, 1]], color: "#00FFFF" },        // Cyan
+    { name: "J", matrix: [[1, 0, 0], [1, 1, 1]], color: "#0040FF" }, // Deep Blue
+    { name: "L", matrix: [[0, 0, 1], [1, 1, 1]], color: "#FF8000" }, // Orange
+    { name: "O", matrix: [[1, 1], [1, 1]], color: "#FFFF00" },       // Yellow
+    { name: "S", matrix: [[0, 1, 1], [1, 1, 0]], color: "#00FF00" }, // Green
+    { name: "T", matrix: [[0, 1, 0], [1, 1, 1]], color: "#AA00FF" }, // Purple
+    { name: "Z", matrix: [[1, 1, 0], [0, 1, 1]], color: "#FF0000" }  // Red
 ];
 
 // Mock player data
@@ -33,6 +33,8 @@ const TetrisGame = () => {
     const params = useParams();
     const roomName = params.roomName;
     const gameContainerRef = useRef<HTMLDivElement>(null);
+    const [gameTime, setGameTime] = useState(0); // Time in seconds
+    const [speedMultiplier, setSpeedMultiplier] = useState(10); // Speed multiplier based on time
 
     const [players, setPlayers] = useState(mockPlayers);
     const [board, setBoard] = useState(createEmptyBoard());
@@ -88,7 +90,7 @@ const TetrisGame = () => {
         }
     }, [currentPiece, nextPiece, getRandomPiece]);
 
-   
+
     // Check for collisions
     const checkCollision = (piece: { x: number; y: number; shape: number[][] }, boardToCheck: (string | number)[][]) => {
         for (let y = 0; y < piece.shape.length; y++) {
@@ -112,91 +114,91 @@ const TetrisGame = () => {
     };
 
     // Move piece down
-const moveDown = () => {
-    if (!currentPiece) return;
-    
-    const newPiece = { ...currentPiece, y: currentPiece.y + 1 };
-    
-    if (checkCollision(newPiece, board)) {
-        // Lock the piece in place
-        const newBoard = [...board];
-        let gameOverDetected = false;
-        
-        for (let y = 0; y < currentPiece.shape.length; y++) {
-            for (let x = 0; x < currentPiece.shape[y].length; x++) {
-                if (currentPiece.shape[y][x]) {
-                    const boardY = currentPiece.y + y;
-                    
-                    // If any part of the piece is above the board when locked
-                    if (boardY < 0) {
-                        gameOverDetected = true;
-                        break;
-                    }
-                    
-                    newBoard[boardY][currentPiece.x + x] = currentPiece.color;
-                }
-            }
-            if (gameOverDetected) break;
-        }
-        
-        if (gameOverDetected) {
-            setGameOver(true);
-            return;
-        }
-        
-        // Check for completed rows
-        const { updatedBoard, clearedLines } = clearRows(newBoard);
-        setBoard(updatedBoard);
-        
-        if (clearedLines > 0) {
-            const newLines = lines + clearedLines;
-            setLines(newLines);
-            
-            // Level up every 10 lines
-            if (Math.floor(newLines / 10) > Math.floor(lines / 10)) {
-                setLevel(prev => prev + 1);
-            }
-            
-            // Calculate score based on level and lines cleared
-            const points = [40, 100, 300, 1200][Math.min(clearedLines - 1, 3)] * level;
-            setScore(prevScore => prevScore + points);
-        }
-        
-        // Set the next piece
-        setCurrentPiece(nextPiece);
-        setNextPiece(getRandomPiece());
-        
-        // Update player score
-        const updatedPlayers = players.map(player => {
-            if (player.isCurrentPlayer) {
-                return { ...player, score: player.score + 10 }; // Small points for placing a piece
-            }
-            return player;
-        });
-        setPlayers(updatedPlayers);
-    } else {
-        setCurrentPiece(newPiece);
-    }
-};
+    const moveDown = () => {
+        if (!currentPiece) return;
 
-// Clear completed rows
-const clearRows = (board: (string | number)[][]) => {
-    const newBoard = [...board];
-    let linesCleared = 0;
-    
-    for (let y = ROWS - 1; y >= 0; y--) {
-        if (newBoard[y].every(cell => cell !== 0)) {
-            // Clear the row
-            newBoard.splice(y, 1);
-            newBoard.unshift(Array(COLS).fill(0));
-            linesCleared++;
-            y++; // Check the same row again
+        const newPiece = { ...currentPiece, y: currentPiece.y + 1 };
+
+        if (checkCollision(newPiece, board)) {
+            // Lock the piece in place
+            const newBoard = [...board];
+            let gameOverDetected = false;
+
+            for (let y = 0; y < currentPiece.shape.length; y++) {
+                for (let x = 0; x < currentPiece.shape[y].length; x++) {
+                    if (currentPiece.shape[y][x]) {
+                        const boardY = currentPiece.y + y;
+
+                        // If any part of the piece is above the board when locked
+                        if (boardY < 0) {
+                            gameOverDetected = true;
+                            break;
+                        }
+
+                        newBoard[boardY][currentPiece.x + x] = currentPiece.color;
+                    }
+                }
+                if (gameOverDetected) break;
+            }
+
+            if (gameOverDetected) {
+                setGameOver(true);
+                return;
+            }
+
+            // Check for completed rows
+            const { updatedBoard, clearedLines } = clearRows(newBoard);
+            setBoard(updatedBoard);
+
+            if (clearedLines > 0) {
+                const newLines = lines + clearedLines;
+                setLines(newLines);
+
+                // Level up every 10 lines
+                if (Math.floor(newLines / 10) > Math.floor(lines / 10)) {
+                    setLevel(prev => prev + 1);
+                }
+
+                // Calculate score based on level and lines cleared
+                const points = [40, 100, 300, 1200][Math.min(clearedLines - 1, 3)] * level;
+                setScore(prevScore => prevScore + points);
+            }
+
+            // Set the next piece
+            setCurrentPiece(nextPiece);
+            setNextPiece(getRandomPiece());
+
+            // Update player score
+            const updatedPlayers = players.map(player => {
+                if (player.isCurrentPlayer) {
+                    return { ...player, score: player.score + 10 }; // Small points for placing a piece
+                }
+                return player;
+            });
+            setPlayers(updatedPlayers);
+        } else {
+            setCurrentPiece(newPiece);
         }
-    }
-    
-    return { updatedBoard: newBoard, clearedLines: linesCleared };
-};
-   
+    };
+
+    // Clear completed rows
+    const clearRows = (board: (string | number)[][]) => {
+        const newBoard = [...board];
+        let linesCleared = 0;
+
+        for (let y = ROWS - 1; y >= 0; y--) {
+            if (newBoard[y].every(cell => cell !== 0)) {
+                // Clear the row
+                newBoard.splice(y, 1);
+                newBoard.unshift(Array(COLS).fill(0));
+                linesCleared++;
+                y++; // Check the same row again
+            }
+        }
+
+        return { updatedBoard: newBoard, clearedLines: linesCleared };
+    };
+
 
     // Move piece left/right
     const moveHorizontal = (dir: number) => {
@@ -227,7 +229,7 @@ const clearRows = (board: (string | number)[][]) => {
     useEffect(() => {
         if (!currentPiece) {
             const newPiece = getRandomPiece();
-            
+
             // Check if the starting position is already occupied
             if (checkCollision(newPiece, board)) {
                 console.log("Game over detected - collision at start position");
@@ -244,11 +246,11 @@ const clearRows = (board: (string | number)[][]) => {
                 }
             }
         }
-        
+
         if (!nextPiece) {
             setNextPiece(getRandomPiece());
         }
-        
+
         // Focus on game container to prevent scrolling with arrow keys
         if (gameContainerRef.current) {
             gameContainerRef.current.focus();
@@ -269,6 +271,34 @@ const clearRows = (board: (string | number)[][]) => {
         return { ...ghostPiece, y: ghostY };
     };
 
+    
+    useEffect(() => {
+        if (gameOver || isPaused) return;
+        
+        const timer = setInterval(() => {
+            setGameTime(prevTime => {
+                const newTime = prevTime + 1;
+                
+                // Increase difficulty at specific time thresholds
+                // 2 minutes = 120 seconds, 4 minutes = 240 seconds, etc.
+                if (newTime === 120) {
+                    setSpeedMultiplier(1.2); // 20% faster
+                } else if (newTime === 240) {
+                    setSpeedMultiplier(1.5); // 50% faster
+                } else if (newTime === 360) {
+                    setSpeedMultiplier(1.8); // 80% faster
+                } else if (newTime === 480) {
+                    setSpeedMultiplier(2.2); // 120% faster
+                }
+                
+                return newTime;
+            });
+        }, 1000);
+        
+        return () => clearInterval(timer);
+    }, [gameOver, isPaused]);
+
+    
     useEffect(() => {
         if (gameOver || isPaused) return;
         
@@ -280,14 +310,16 @@ const clearRows = (board: (string | number)[][]) => {
             return;
         }
         
-        const dropSpeed = Math.max(100, 500 - (level - 1) * 50); // Speed increases with level
+        // Apply both level-based speed and time-based multiplier
+        const baseDropSpeed = Math.max(100, 500 - (level - 1) * 50); 
+        const adjustedDropSpeed = Math.max(50, Math.floor(baseDropSpeed / speedMultiplier));
         
         const gameLoop = setInterval(() => {
             moveDown();
-        }, dropSpeed);
+        }, adjustedDropSpeed);
         
         return () => clearInterval(gameLoop);
-    }, [currentPiece, board, gameOver, isPaused, level]);
+    }, [currentPiece, board, gameOver, isPaused, level, speedMultiplier]);
 
     // Handle keydown events
     useEffect(() => {
@@ -312,17 +344,74 @@ const clearRows = (board: (string | number)[][]) => {
                 case 'ArrowUp':
                     rotate();
                     break;
-                case 'Space':
-                    // Hard drop
-                    if (currentPiece) {
-                        let droppedPiece = { ...currentPiece };
-                        while (!checkCollision({ ...droppedPiece, y: droppedPiece.y + 1 }, board)) {
-                            droppedPiece = { ...droppedPiece, y: droppedPiece.y + 1 };
-                        }
-                        setCurrentPiece(droppedPiece);
-                        moveDown();
-                    }
-                    break;
+                                                          // Space tuşu işleme fonksiyonunu düzenleyelim
+                                        case 'Space':
+                                            // Hard drop - instantly place the piece at the bottom and lock it
+                                            if (currentPiece && !isPaused) {
+                                                const ghostPiece = getGhostPosition(currentPiece);
+                                                if (ghostPiece) {
+                                                    // Önce hayalet parçayı yerleştir
+                                                    setCurrentPiece(ghostPiece);
+                                                    
+                                                    // Tahtaya parçayı kilitle (moveDown ile aynı mantığı kullanacağız)
+                                                    const newBoard = [...board];
+                                                    let gameOverDetected = false;
+                                                    
+                                                    for (let y = 0; y < ghostPiece.shape.length; y++) {
+                                                        for (let x = 0; x < ghostPiece.shape[y].length; x++) {
+                                                            if (ghostPiece.shape[y][x]) {
+                                                                const boardY = ghostPiece.y + y;
+                                                                
+                                                                // If any part of the piece is above the board when locked
+                                                                if (boardY < 0) {
+                                                                    gameOverDetected = true;
+                                                                    break;
+                                                                }
+                                                                
+                                                                newBoard[boardY][ghostPiece.x + x] = ghostPiece.color;
+                                                            }
+                                                        }
+                                                        if (gameOverDetected) break;
+                                                    }
+                                                    
+                                                    if (gameOverDetected) {
+                                                        setGameOver(true);
+                                                        return;
+                                                    }
+                                                    
+                                                    // Check for completed rows
+                                                    const { updatedBoard, clearedLines } = clearRows(newBoard);
+                                                    setBoard(updatedBoard);
+                                                    
+                                                    if (clearedLines > 0) {
+                                                        const newLines = lines + clearedLines;
+                                                        setLines(newLines);
+                                                        
+                                                        // Level up every 10 lines
+                                                        if (Math.floor(newLines / 10) > Math.floor(lines / 10)) {
+                                                            setLevel(prev => prev + 1);
+                                                        }
+                                                        
+                                                        // Calculate score based on level and lines cleared
+                                                        const points = [40, 100, 300, 1200][Math.min(clearedLines - 1, 3)] * level;
+                                                        setScore(prevScore => prevScore + points);
+                                                    }
+                                                    
+                                                    // Hemen bir sonraki parçaya geç
+                                                    setCurrentPiece(nextPiece);
+                                                    setNextPiece(getRandomPiece());
+                                                    
+                                                    // Update player score
+                                                    const updatedPlayers = players.map(player => {
+                                                        if (player.isCurrentPlayer) {
+                                                            return { ...player, score: player.score + 10 }; // Small points for placing a piece
+                                                        }
+                                                        return player;
+                                                    });
+                                                    setPlayers(updatedPlayers);
+                                                }
+                                            }
+                                            break;
                 case 'KeyP':
                     setIsPaused(!isPaused);
                     break;
@@ -347,13 +436,22 @@ const clearRows = (board: (string | number)[][]) => {
         setIsPaused(false);
         setLevel(1);
         setLines(0);
-
+        setGameTime(0);
+        setSpeedMultiplier(1);
+        
         // Reset player scores
         const resetPlayers = players.map(player => ({
             ...player,
             score: player.isCurrentPlayer ? 0 : player.score
         }));
         setPlayers(resetPlayers);
+    };
+    
+    // Helper function to format time as MM:SS
+    const formatTime = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
 
     // Render game board
@@ -562,21 +660,35 @@ const clearRows = (board: (string | number)[][]) => {
                     <div className="w-full lg:w-auto flex flex-col gap-4" style={{ height: `${ROWS * CELL_SIZE + 12 + 48}px` }}>
                         {/* Score & level */}
                         <div className="bg-gray-900/80 border border-cyan-500/20 rounded-2xl p-4 shadow-xl backdrop-blur-sm">
-                            <div className="grid grid-cols-3 gap-4 text-center">
-                                <div>
-                                    <div className="text-gray-400 text-sm">Score</div>
-                                    <div className="text-2xl font-bold text-cyan-400">{score}</div>
-                                </div>
-                                <div>
-                                    <div className="text-gray-400 text-sm">Level</div>
-                                    <div className="text-2xl font-bold text-purple-400">{level}</div>
-                                </div>
-                                <div>
-                                    <div className="text-gray-400 text-sm">Lines</div>
-                                    <div className="text-2xl font-bold text-green-400">{lines}</div>
-                                </div>
-                            </div>
-                        </div>
+    <div className="grid grid-cols-3 gap-4 text-center mb-3">
+        <div>
+            <div className="text-gray-400 text-sm">Score</div>
+            <div className="text-2xl font-bold text-cyan-400">{score}</div>
+        </div>
+        <div>
+            <div className="text-gray-400 text-sm">Level</div>
+            <div className="text-2xl font-bold text-purple-400">{level}</div>
+        </div>
+        <div>
+            <div className="text-gray-400 text-sm">Lines</div>
+            <div className="text-2xl font-bold text-green-400">{lines}</div>
+        </div>
+    </div>
+
+    {/* Süre ve Hız Çarpanı bilgilerini ekleyelim */}
+    <div className="grid grid-cols-2 gap-4 text-center border-t border-cyan-500/20 pt-3">
+        <div>
+            <div className="text-gray-400 text-sm">Time</div>
+            <div className="text-xl font-medium text-amber-400">{formatTime(gameTime)}</div>
+        </div>
+        <div>
+            <div className="text-gray-400 text-sm">Speed</div>
+            <div className="text-xl font-medium text-red-400">
+                {speedMultiplier === 1 ? 'Normal' : `${speedMultiplier.toFixed(1)}x`}
+            </div>
+        </div>
+    </div>
+</div>
 
                         {/* Next piece */}
                         <div className="bg-gray-900/80 border border-cyan-500/20 rounded-2xl p-4 shadow-xl backdrop-blur-sm">

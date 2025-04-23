@@ -1,0 +1,184 @@
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.gameWrapper {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.gameArea {
+    position: relative;
+}
+
+.board {
+    background-color: #111;
+    border: 3px solid #444;
+    display: flex;
+    flex-wrap: wrap;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.cell {
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.1s;
+}
+
+.sidePanel {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.scoreBox {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.nextPieceBox {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.nextPiece {
+    margin: 10px auto;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #111;
+    padding: 10px;
+    border-radius: 3px;
+}
+
+.previewCell {
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.controls {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.controls h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.controls p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.leaderboard {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.leaderboard ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.leaderboard li {
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.currentPlayer {
+    font-weight: bold;
+    color: #2196F3;
+}
+
+.pauseButton {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.pauseButton:hover {
+    background-color: #0d8bf2;
+}
+
+.gameOver, .paused {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+}
+
+.gameOver h2, .paused h2 {
+    margin-bottom: 20px;
+}
+
+.gameOver button, .paused button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.gameOver button:hover, .paused button:hover {
+    background-color: #45a049;
+}
+
+@media (max-width: 768px) {
+    .gameWrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .sidePanel {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .board {
+        max-width: 100%;
+    }
+}

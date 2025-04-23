@@ -8,7 +8,6 @@ import TextScramble from '../TextScramble/page';
 const Header = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     
-    const [scrambleKey, setScrambleKey] = useState(0);
     const [scrambleUsername, setScrambleUsername] = useState(0);
 
     // Function to trigger username scramble manually on hover
@@ -22,17 +21,12 @@ const Header = () => {
         setIsLoggedIn(!!token);
         
         // Set up automatic scrambling intervals
-        const titleInterval = setInterval(() => {
-            setScrambleKey(prev => prev + 1);
-        }, 10000); // Slowed down to every 10 seconds for title
-        
         const usernameInterval = setInterval(() => {
             setScrambleUsername(prev => prev + 1);
         }, 10000); // Slowed down to every 15 seconds for username
         
         // Clean up intervals on component unmount
         return () => {
-            clearInterval(titleInterval);
             clearInterval(usernameInterval);
         };
     }, []);
@@ -43,11 +37,9 @@ const Header = () => {
                 <div className="flex justify-between items-center">
                     <Link href="/" className="group">
                         <div className="text-3xl font-bold tracking-tight relative overflow-hidden">
-                            <TextScramble 
-                                key={scrambleKey}
-                                text="TETRIX" 
-                                className="font-mono tracking-tighter bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 bg-clip-text text-transparent"
-                            />
+                            <span className="font-mono tracking-tighter bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
+                                TETRIX
+                            </span>
                         </div>
                     </Link>
                 

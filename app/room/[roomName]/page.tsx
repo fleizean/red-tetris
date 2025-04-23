@@ -34,7 +34,7 @@ const TetrisGame = () => {
     const roomName = params.roomName;
     const gameContainerRef = useRef<HTMLDivElement>(null);
     const [gameTime, setGameTime] = useState(0); // Time in seconds
-    const [speedMultiplier, setSpeedMultiplier] = useState(10); // Speed multiplier based on time
+    const [speedMultiplier, setSpeedMultiplier] = useState(1); // Speed multiplier based on time
 
     const [players, setPlayers] = useState(mockPlayers);
     const [board, setBoard] = useState(createEmptyBoard());
